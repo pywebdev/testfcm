@@ -1,37 +1,51 @@
-## Welcome to GitHub Pages
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+	<title>.::Web Developer::.</title>
+	<meta name="description" content="Web Developer" />
+	<meta name="keywords" content="HTML,CSS,XML,JavaScript,jQuery,PHP,MySQL" />
+	<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<link rel="manifest" href="manifest.json">  
+	<script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+	<script>
+		// Initialize Firebase
+		var config = {
+			apiKey: "AAAAlvfjlKE:APA91bGd6aFtLCqJcH0sEVR8OGzSbhnPRVD2TN2bQ-DcI-WUknwFMqBunk6JDzPqdHcCmoxyuV9-gCZGKrig6SDEHLzLoJ9K-nQCCVgD-O4aWqGORAzk4ImGzPDnjG-TPDpAHwvMTaBl",
+			authDomain: "fcmproject-11b1f.firebaseapp.com",
+			databaseURL: "https://fcmproject-11b1f.firebaseio.com/",
+			storageBucket: "gs://fcmproject-11b1f.appspot.com",
+			messagingSenderId: "648403981473"
+		  };
+		firebase.initializeApp(config);
 
-You can use the [editor on GitHub](https://github.com/pywebdev/testfcm/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+		const messaging = firebase.messaging();
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+		messaging.requestPermission()
+		.then(function() {
+		  console.log('Notification permission granted.');
+		  return messaging.getToken();
+		})
+		.then(function(token) {
+		  console.log(token); // Display user token
+		})
+		.catch(function(err) { // Happen if user deney permission
+		  console.log('Unable to get permission to notify.', err);
+		});
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/pywebdev/testfcm/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+		messaging.onMessage(function(payload){
+			console.log('onMessage',payload);
+		})
+		$.ajax({
+			type:'POST',
+			url:'token.php',
+			data:{token : token, _token: "<?php echo csrf_token(); ?>"},
+			success:function(data){
+				$("#msg").html(data);
+			}
+		}); 
+	</script>
+</head>
+<body>
+</body>
+</html>
